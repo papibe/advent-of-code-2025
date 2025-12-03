@@ -6,6 +6,11 @@ name = "pypi"
 [packages]
 
 [dev-packages]
+mypy = "*"
+isort = "*"
+black = "*"
+ruff = "*"
+pytest = "*"
 
 [requires]
 python_version = "3.12"
