@@ -29,24 +29,31 @@ def solve(rotations: List[str]) -> int:
         else:
             step = -1
 
+        clicks = 0
         for _ in range(amount):
             dial_pointer = (dial_pointer + step) % 100
             if dial_pointer == 0:
-                zeros += 1
+                clicks += 1
+        zeros += clicks
 
+        increase = 0
         raw_dial_pointer = original_pointer + step * amount
         dial_pointer2 = (original_pointer + step * amount) % 100
-        if original_pointer != 0 and (raw_dial_pointer < 0 or raw_dial_pointer > 99):
+        if  (raw_dial_pointer < 0 or raw_dial_pointer > 99):
             rotation = amount // 100
-            zeros2 += rotation + 1
+            increase = rotation + 1
 
-        # if dial_pointer2 == 0:
-        #     zeros2 += 1
 
-        if zeros != zeros2:
+        elif dial_pointer2 == 0:
+            increase += 1
 
-            print(f"{original_pointer = } {amount = } {step = } {zeros = } {zeros2 = }")
+        zeros2 += increase
+
+        if clicks != increase:
+            print(f"{original_pointer = } dir = {step * amount} {clicks = } {increase = }")
             print(f"{original_pointer + step * amount = }")
+            print(f"{dial_pointer2 = }")
+            print()
 
 
     print(f"{zeros2 = }")
