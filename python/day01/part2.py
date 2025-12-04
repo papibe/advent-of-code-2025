@@ -1,14 +1,11 @@
-import re
-from collections import deque, defaultdict, namedtuple
-from dataclasses import dataclass
-from typing import Deque, Dict, List, Match, Optional, Set, Tuple
+from typing import List, Tuple
 
 
-def parse(filename: str) -> List[str]:
+def parse(filename: str) -> List[Tuple[str, int]]:
     with open(filename, "r") as fp:
         data: List[str] = fp.read().splitlines()
 
-    rotations = []
+    rotations: List[Tuple[str, int]] = []
     for line in data:
         direction: str = line[0]
         amount: int = int(line[1:])
@@ -17,45 +14,35 @@ def parse(filename: str) -> List[str]:
     return rotations
 
 
-def solve(rotations: List[str]) -> int:
+def solve(rotations: List[Tuple[str, int]]) -> int:
     dial_pointer: int = 50
+    zero_clicks: int = 0
 
-    zeros: int = 0
-    zeros2: int = 0
     for direction, amount in rotations:
-        original_pointer  = dial_pointer
+        # amount = 100k + r
+        k: int = amount // 100
+        r: int = amount % 100
+        zero_clicks += k
+        spin: int
+
         if direction == "R":
-            step = 1
+            if dial_pointer + r >= 100:
+                zero_clicks += 1
+            spin = 1
+
         else:
-            step = -1
+            if dial_pointer > 0 and dial_pointer - r <= 0:
+                zero_clicks += 1
+            spin = -1
 
-        for _ in range(amount):
-            dial_pointer = (dial_pointer + step) % 100
-            if dial_pointer == 0:
-                zeros += 1
+        dial_pointer = (dial_pointer + spin * amount) % 100
 
-        raw_dial_pointer = original_pointer + step * amount
-        dial_pointer2 = (original_pointer + step * amount) % 100
-        if original_pointer != 0 and (raw_dial_pointer < 0 or raw_dial_pointer > 99):
-            rotation = amount // 100
-            zeros2 += rotation + 1
-
-        # if dial_pointer2 == 0:
-        #     zeros2 += 1
-
-        if zeros != zeros2:
-
-            print(f"{original_pointer = } {amount = } {step = } {zeros = } {zeros2 = }")
-            print(f"{original_pointer + step * amount = }")
-
-
-    print(f"{zeros2 = }")
-    return zeros
+    return zero_clicks
 
 
 def solution(filename: str) -> int:
-    data: List[str] = parse(filename)
-    return solve(data)
+    rotations: List[Tuple[str, int]] = parse(filename)
+    return solve(rotations)
 
 
 if __name__ == "__main__":
