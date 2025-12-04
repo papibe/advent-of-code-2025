@@ -16,18 +16,28 @@ def parse(filename: str) -> List[Tuple[str, int]]:
 
 def solve(rotations: List[Tuple[str, int]]) -> int:
     dial_pointer: int = 50
+    zero_clicks: int = 0
 
-    zeros: int = 0
     for direction, amount in rotations:
+        # amount = 100k + r
+        k: int = amount // 100
+        r: int = amount % 100
+        zero_clicks += k
+        spin: int
+
         if direction == "R":
-            dial_pointer = (dial_pointer + amount) % 100
+            if dial_pointer + r >= 100:
+                zero_clicks += 1
+            spin = 1
+
         else:
-            dial_pointer = (dial_pointer - amount) % 100
+            if dial_pointer > 0 and dial_pointer - r <= 0:
+                zero_clicks += 1
+            spin = -1
 
-        if dial_pointer == 0:
-            zeros += 1
+        dial_pointer = (dial_pointer + spin * amount) % 100
 
-    return zeros
+    return zero_clicks
 
 
 def solution(filename: str) -> int:
@@ -36,5 +46,5 @@ def solution(filename: str) -> int:
 
 
 if __name__ == "__main__":
-    print(solution("./example.txt"))  # 3
-    print(solution("./input.txt"))  # 1182
+    print(solution("./example.txt"))  # 6
+    print(solution("./input.txt"))  # 6907
