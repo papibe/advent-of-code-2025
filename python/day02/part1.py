@@ -20,18 +20,19 @@ def parse(filename: str) -> List[Range]:
 
 
 def solve(ranges: List[Range]) -> int:
-    total_sum: int = 0
+    sum_of_invalid_ids: int = 0
 
     for id_range in ranges:
         for product_id in range(id_range.start_id, id_range.end_id + 1):
             str_id: str = str(product_id)
+            n: int = len(str_id)
 
-            if len(str_id) % 2 == 0:
-                half: str = str_id[: len(str_id) // 2]
+            if n % 2 == 0:
+                half: str = str_id[: n // 2]
                 if str_id == half + half:
-                    total_sum += product_id
+                    sum_of_invalid_ids += product_id
 
-    return total_sum
+    return sum_of_invalid_ids
 
 
 def solution(filename: str) -> int:
