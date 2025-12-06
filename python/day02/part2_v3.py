@@ -21,7 +21,7 @@ def parse(filename: str) -> List[Range]:
 
 
 def solve(ranges: List[Range]) -> int:
-    total_sum: int = 0
+    sum_of_invalid_ids: int = 0
 
     for id_range in ranges:
         for product_id in range(id_range.start_id, id_range.end_id + 1):
@@ -34,10 +34,10 @@ def solve(ranges: List[Range]) -> int:
                 pattern: str = f"^({str_id[:pattern_len]})" + r"{2,}$"
                 matches: Optional[Match[str]] = re.match(pattern, str_id)
                 if matches:
-                    total_sum += product_id
+                    sum_of_invalid_ids += product_id
                     break
 
-    return total_sum
+    return sum_of_invalid_ids
 
 
 def solution(filename: str) -> int:
