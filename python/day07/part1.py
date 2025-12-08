@@ -1,27 +1,25 @@
-import re
-from collections import deque, defaultdict, namedtuple
-from dataclasses import dataclass
-from typing import Deque, Dict, List, Match, Optional, Set, Tuple
+from typing import List, Tuple
+
+START: str = "S"
+SPACE: str = "."
+LAST: int = -1
 
 
-def parse(filename: str) -> List[str]:
+def parse(filename: str) -> Tuple[int, int, List[str]]:
     with open(filename, "r") as fp:
-        data: List[str] = fp.read().splitlines()
+        grid: List[str] = fp.read().splitlines()
 
-    start_row = start_col = 0
-    grid = []
-    for row, line in enumerate(data):
+    for row, line in enumerate(grid):
         for col, cell in enumerate(line):
-            if cell == "S":
-                start_row = row
-                start_col = col
-
-        grid.append([c for c in line])
+            if cell == START:
+                start_row: int = row
+                start_col: int = col
+                break
 
     return start_row, start_col, grid
 
 
-def solve(start_row, start_col, grid) -> int:
+def solve(start_row: int, start_col: int, grid: List[str]) -> int:
     total_sum: int = 0
 
     positions = set([(start_row, start_col)])
@@ -30,10 +28,10 @@ def solve(start_row, start_col, grid) -> int:
         for row, col in positions:
             new_row = row + 1
             new_col = col
-            print(new_row, new_col)
+            # print(new_row, new_col)
             if 0 <= new_row < len(grid) and 0 <= new_col < len(grid[0]):
                 if grid[new_row][new_col] == "^":
-                    print("split")
+                    # print("split")
                     if 0 <= new_col - 1 < len(grid[0]):
                         new_positions.add((new_row, new_col - 1))
                     if 0 <= new_col + 1 < len(grid[0]):
