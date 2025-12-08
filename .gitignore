@@ -175,3 +175,6 @@ cython_debug/
 
 # python day template
 python/day00
+
+# VSCode
+.vscode/
