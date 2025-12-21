@@ -1,27 +1,21 @@
-import re
-from collections import deque, defaultdict, namedtuple
-from dataclasses import dataclass
-from typing import Deque, Dict, List, Match, Optional, Set, Tuple
+from typing import List, Tuple
 
 LAST: int = -1
 
-def parse(filename: str) -> List[str]:
-    with open(filename, "r") as fp:
-        data: List[str] = fp.read().strip("\n")
 
-    all_rows = data.split("\n")
-    number_rows = all_rows[:LAST]
+def parse(filename: str) -> Tuple[List[str], List[Tuple[str, int, int]]]:
+    with open(filename, "r") as fp:
+        data: str = fp.read().strip("\n")
+
+    all_rows: List[str] = data.split("\n")
+    numbers: List[str] = all_rows[:LAST]
     operations_row = all_rows[LAST]
 
-    numbers = []
-    for n in number_rows:
-        numbers.append(n.replace("\n", " "))
-
-    operations = []
-    index = 0
+    operations: List[Tuple[str, int, int]] = []
+    index: int = 0
     while index < len(operations_row):
         operation = operations_row[index]
-        start_index = index
+        start_index: int = index
 
         index += 1
         while index < len(operations_row) and operations_row[index] == " ":
@@ -30,31 +24,28 @@ def parse(filename: str) -> List[str]:
             index = index + 1
         operations.append((operation, start_index, index - 1))
 
-    # print(numbers)
-    # for op in operations:
-    #     print(op)
-
     return numbers, operations
 
 
-def solve(numbers, operations) -> int:
+def solve(numbers: List[str], operations: List[Tuple[str, int, int]]) -> int:
     grand_total: int = 0
 
-    for op, start, end in operations:
-        result: int = 1 if op == "*" else 0
+    for operation, start, end in operations:
+        result: int = 1 if operation == "*" else 0
 
         for col in range(start, end):
-            number = []
+            digits: List[str] = []
             for row in range(len(numbers)):
-                number.append(numbers[row][col])
+                digits.append(numbers[row][col])
 
-            if op == "*":
-                result *= int("".join(number))
+            number: int = int("".join(digits))
+
+            if operation == "*":
+                result *= number
             else:
-                result += int("".join(number))
+                result += number
 
         grand_total += result
-
 
     return grand_total
 

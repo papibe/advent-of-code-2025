@@ -1,40 +1,33 @@
-import re
-from collections import deque, defaultdict, namedtuple
-from dataclasses import dataclass
-from typing import Deque, Dict, List, Match, Optional, Set, Tuple
+from typing import List, Tuple
 
 
-def parse(filename: str) -> List[str]:
+def parse(filename: str) -> Tuple[List[List[int]], List[str]]:
     with open(filename, "r") as fp:
         data: List[str] = fp.read().splitlines()
 
-    numbers = []
+    numbers: List[List[int]] = []
     for line in data[:-1]:
-        line_numbers = line.split()
+        line_numbers: List[str] = line.split()
         numbers.append([int(n) for n in line_numbers])
 
-    operations = data[-1].split()
+    operations: List[str] = data[-1].split()
 
     return numbers, operations
 
 
-def solve(numbers, operations) -> int:
+def solve(numbers: List[List[int]], operations: List[str]) -> int:
     grand_total: int = 0
 
-    for index, op in enumerate(operations):
-        if op == "*":
-            result = 1
-        else:
-            result = 0
+    for index, operation in enumerate(operations):
+        result: int = 1 if operation == "*" else 0
 
         for row in numbers:
-            if op == "*":
+            if operation == "*":
                 result *= row[index]
             else:
                 result += row[index]
 
         grand_total += result
-
 
     return grand_total
 
@@ -45,5 +38,5 @@ def solution(filename: str) -> int:
 
 
 if __name__ == "__main__":
-    print(solution("./example.txt"))  # 0
-    print(solution("./input.txt"))  # 0
+    print(solution("./example.txt"))  # 4277556
+    print(solution("./input.txt"))  # 7229350537438
