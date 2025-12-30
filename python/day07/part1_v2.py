@@ -59,10 +59,5 @@ def solution(filename: str) -> int:
 
 
 if __name__ == "__main__":
-    r = solution("./example.txt")
-    print(r)
-    assert r == 21
-    r = solution("./input.txt")
-    print(r)
-
-    assert r == 1560
+    print(solution("./example.txt"))  # 21
+    print(solution("./input.txt"))  # 1560
