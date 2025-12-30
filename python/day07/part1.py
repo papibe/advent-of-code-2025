@@ -1,6 +1,8 @@
-from typing import List, Tuple
+from collections import deque
+from typing import Deque, List, Set, Tuple
 
 START: str = "S"
+DIVIDER: str = "^"
 SPACE: str = "."
 LAST: int = -1
 
@@ -20,30 +22,35 @@ def parse(filename: str) -> Tuple[int, int, List[str]]:
 
 
 def solve(start_row: int, start_col: int, grid: List[str]) -> int:
-    total_sum: int = 0
+    # BFS init
+    queue: Deque[Tuple[int, int]] = deque([(start_row, start_col)])
+    seen: Set[Tuple[int, int]] = set([(start_row, start_col)])
+    total_splits: int = 0
 
-    positions = set([(start_row, start_col)])
-    while positions:
-        new_positions = set()
-        for row, col in positions:
-            new_row = row + 1
-            new_col = col
-            # print(new_row, new_col)
-            if 0 <= new_row < len(grid) and 0 <= new_col < len(grid[0]):
-                if grid[new_row][new_col] == "^":
-                    # print("split")
-                    if 0 <= new_col - 1 < len(grid[0]):
-                        new_positions.add((new_row, new_col - 1))
-                    if 0 <= new_col + 1 < len(grid[0]):
-                        new_positions.add((new_row, new_col + 1))
+    # BFS
+    while queue:
+        row: int
+        col: int
+        row, col = queue.popleft()
 
-                    total_sum += 1
-                else:
-                    new_positions.add((new_row, new_col))
+        new_row: int = row + 1
+        new_col: int = col
 
-        positions = new_positions
+        if not (0 <= new_row < len(grid) and 0 <= new_col < len(grid[0])):
+            continue
 
-    return total_sum
+        if grid[new_row][new_col] == DIVIDER:
+            total_splits += 1
+            for next_col in [new_col - 1, new_col + 1]:
+                if (new_row, next_col) not in seen:
+                    queue.append((new_row, next_col))
+                    seen.add((new_row, next_col))
+        else:
+            if (new_row, new_col) not in seen:
+                queue.append((new_row, new_col))
+                seen.add((new_row, new_col))
+
+    return total_splits
 
 
 def solution(filename: str) -> int:
@@ -52,5 +59,5 @@ def solution(filename: str) -> int:
 
 
 if __name__ == "__main__":
-    print(solution("./example.txt"))  # 0
-    print(solution("./input.txt"))  # 0
+    print(solution("./example.txt"))  # 21
+    print(solution("./input.txt"))  # 1560
