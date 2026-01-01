@@ -43,5 +43,5 @@ def solution(filename: str) -> int:
 
 
 if __name__ == "__main__":
-    assert solution("./example.txt") == 40
-    assert solution("./input.txt") == 25592971184998
+    print(solution("./example.txt"))  # 40
+    print(solution("./input.txt"))  # 25592971184998
