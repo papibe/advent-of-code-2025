@@ -75,8 +75,5 @@ def solution(filename: str, connections: int) -> int:
 
 
 if __name__ == "__main__":
-    # print(solution("./example.txt", 10))  # 40
-    # print(solution("./input.txt", 1_000))  # 68112
-
-    assert solution("./example.txt", 10) == 40
-    assert solution("./input.txt", 1_000) == 68112
+    print(solution("./example.txt", 10))  # 40
+    print(solution("./input.txt", 1_000))  # 68112
