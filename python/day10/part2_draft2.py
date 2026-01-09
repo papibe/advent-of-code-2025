@@ -1,7 +1,7 @@
-from itertools import combinations
-from typing import List, Tuple
+from ast import literal_eval
 from copy import deepcopy
-
+from itertools import combinations
+from typing import Dict, List, Tuple
 
 ON: str = "#"
 
@@ -26,7 +26,7 @@ class Machine:
 
         self.buttons: List[int] = buttons_values
 
-        self.joltage: List[int] = eval("[" + joltage[1:-1] + "]")
+        self.joltage: List[int] = literal_eval("[" + joltage[1:-1] + "]")
 
     def set_lights_goal(self) -> None:
         goal: int = 0
@@ -65,10 +65,10 @@ class Machine:
     def press(self, button_value: int) -> None:
         self.lights ^= button_value
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash(tuple(self.joltage))
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return str(self.joltage)
 
 
@@ -87,18 +87,21 @@ def parse(filename: str) -> List[Machine]:
 
     return machines
 
-def get_diff_vector(combo: List[Tuple[int, ...]], size: int) -> List[int]:
-    vector = [0] * size
+
+def get_diff_vector(combo: Tuple[int, ...], size: int) -> List[int]:
+    vector: List[int] = [0] * size
     for n in combo:
         for i in range(size):
             if n & (1 << i) != 0:
                 vector[i] += 1
-
     return vector
 
-def get_min_parity(machine: Machine, combos) -> int:
 
-    presses = []
+def get_min_parity(
+    machine: Machine, combos: List[Tuple[int, ...]]
+) -> List[Tuple[int, List[int]]]:
+    presses: List[Tuple[int, List[int]]] = []
+
     for combo in combos:
         machine.reset_lights()
         for button_value in combo:
@@ -108,8 +111,11 @@ def get_min_parity(machine: Machine, combos) -> int:
             presses.append((len(combo), get_diff_vector(combo, len(machine.joltage))))
     return presses
 
-def get_all_button_combos(buttons, machine):
-    combos = {}
+
+def get_all_button_combos(
+    buttons: List[int], machine: Machine
+) -> Dict[int, List[Tuple[int, List[int]]]]:
+    combos: Dict[int, List[Tuple[int, List[int]]]] = {}
     for size in range(len(buttons) + 1):
         for combo in combinations(buttons, size):
             parity: int = 0
@@ -124,30 +130,29 @@ def get_all_button_combos(buttons, machine):
             )
     return combos
 
+
 def get_min_presses(machine: Machine) -> int:
     buttons_combos = get_all_button_combos(machine.buttons, machine)
+    memo: Dict[Tuple[int, ...], int] = {}
 
-    memo = {}
     def _get_min_presses(machine: Machine) -> int:
 
         if machine.is_jolted_balanced():
             return 0
 
         if machine.is_overloaded():
-            return float("inf")
+            return float("inf")  # type: ignore
 
-        # key = tuple(machine.joltage)
-        key = hash(machine)
+        key = tuple(machine.joltage)
         if key in memo:
             return memo[key]
 
         machine.set_lights_goal()
-        # presses = get_min_parity(machine, buttons_combos)
         if machine.goal not in buttons_combos:
-            return float("inf")
+            return float("inf")  # type: ignore
         presses = buttons_combos[machine.goal]
 
-        results = [float("inf")]
+        results: List[int] = [float("inf")]  # type: ignore
         for press, vector in presses:
             new_machine = deepcopy(machine)
 
