@@ -1,89 +1,111 @@
-# Day 11 - Advent of Code 2025
+# Day 12 - Advent of Code 2025
 
-## --- Day 11: Reactor ---
+## --- Day 12: Christmas Tree Farm ---
 
-------------------------
+------------------------------------
 
-You hear some loud beeping coming from a hatch in the floor of the factory, so you decide to check it out. Inside, you find several large electrical conduits and a ladder.
+You're almost out of time, but there can't be much left to decorate. Although there are no stairs, elevators, escalators, tunnels, chutes, teleporters, firepoles, or conduits here that would take you deeper into the North Pole base, there _is_ a ventilation duct. You jump in.
 
-Climbing down the ladder, you discover the source of the beeping: a large, toroidal reactor which powers the factory above. Some Elves here are hurriedly running between the reactor and a nearby server rack, apparently trying to fix something.
+After bumping around for a few minutes, you emerge into a large, well-lit cavern full of Christmas trees!
 
-One of the Elves notices you and rushes over. "It's a good thing you're here! We just installed a new _server rack_, but we aren't having any luck getting the reactor to communicate with it!" You glance around the room and see a tangle of cables and devices running from the server rack to the reactor. She rushes off, returning a moment later with a list of the devices and their outputs (your puzzle input).
+There are a few Elves here frantically decorating before the deadline. They think they'll be able to finish most of the work, but the one thing they're worried about is the _presents_ for all the young Elves that live here at the North Pole. It's an ancient tradition to put the presents under the trees, but the Elves are worried they won't _fit_.
 
-For example:
+The presents come in a few standard but very weird shapes. The shapes and the regions into which they need to fit are all measured in standard _units_. To be aesthetically pleasing, the presents need to be placed into the regions in a way that follows a standardized two-dimensional unit grid; you also can't stack presents.
 
-    aaa: you hhh
-    you: bbb ccc
-    bbb: ddd eee
-    ccc: ddd eee fff
-    ddd: ggg
-    eee: out
-    fff: out
-    ggg: out
-    hhh: ccc fff iii
-    iii: out
+As always, the Elves have a summary of the situation (your puzzle input) for you. First, it contains a list of the presents' shapes. Second, it contains the size of the region under each tree and a list of the number of presents of each shape that need to fit into that region. For example:
 
-Each line gives the name of a device followed by a list of the devices to which its outputs are attached. So, `bbb: ddd eee` means that device `bbb` has two outputs, one leading to device `ddd` and the other leading to device `eee`.
+    0:
+    ###
+    ##.
+    ##.
 
-The Elves are pretty sure that the issue isn't due to any specific device, but rather that the issue is triggered by data following some specific _path_ through the devices. Data only ever flows from a device through its outputs; it can't flow backwards.
+    1:
+    ###
+    ##.
+    .##
 
-After dividing up the work, the Elves would like you to focus on the devices starting with the one next to you (an Elf hastily attaches a label which just says _`you`_) and ending with the main output to the reactor (which is the device with the label _`out`_).
+    2:
+    .##
+    ###
+    ##.
 
-To help the Elves figure out which path is causing the issue, they need you to find _every_ path from `you` to `out`.
+    3:
+    ##.
+    ###
+    ##.
 
-In this example, these are all of the paths from `you` to `out`:
+    4:
+    ###
+    #..
+    ###
 
-* Data could take the connection from `you` to `bbb`, then from `bbb` to `ddd`, then from `ddd` to `ggg`, then from `ggg` to `out`.
-* Data could take the connection to `bbb`, then to `eee`, then to `out`.
-* Data could go to `ccc`, then `ddd`, then `ggg`, then `out`.
-* Data could go to `ccc`, then `eee`, then `out`.
-* Data could go to `ccc`, then `fff`, then `out`.
+    5:
+    ###
+    .#.
+    ###
 
-In total, there are `_5_` different paths leading from `you` to `out`.
+    4x4: 0 0 0 0 2 0
+    12x5: 1 0 1 0 2 2
+    12x5: 1 0 1 0 3 2
 
-_How many different paths lead from `you` to `out`?_
+The first section lists the standard present _shapes_. For convenience, each shape starts with its _index_ and a colon; then, the shape is displayed visually, where `#` is part of the shape and `.` is not.
 
-Your puzzle answer was `668`.
+The second section lists the _regions_ under the trees. Each line starts with the width and length of the region; `12x5` means the region is `12` units wide and `5` units long. The rest of the line describes the presents that need to fit into that region by listing the _quantity of each shape_ of present; `1 0 1 0 3 2` means you need to fit one present with shape index 0, no presents with shape index 1, one present with shape index 2, no presents with shape index 3, three presents with shape index 4, and two presents with shape index 5.
+
+Presents can be _rotated and flipped_ as necessary to make them fit in the available space, but they have to always be placed perfectly on the grid. Shapes can't overlap (that is, the `#` part from two different presents can't go in the same place on the grid), but they _can_ fit together (that is, the `.` part in a present's shape's diagram does not block another present from occupying that space on the grid).
+
+The Elves need to know _how many of the regions_ can fit the presents listed. In the above example, there are six unique present shapes and three regions that need checking.
+
+The first region is 4x4:
+
+    ....
+    ....
+    ....
+    ....
+
+In it, you need to determine whether you could fit two presents that have shape index `4`:
+
+    ###
+    #..
+    ###
+
+After some experimentation, it turns out that you _can_ fit both presents in this region. Here is one way to do it, using `A` to represent one present and `B` to represent the other:
+
+    AAA.
+    ABAB
+    ABAB
+    .BBB
+
+The second region, `12x5: 1 0 1 0 2 2`, is `12` units wide and `5` units long. In that region, you need to try to fit one present with shape index `0`, one present with shape index `2`, two presents with shape index `4`, and two presents with shape index `5`.
+
+It turns out that these presents _can_ all fit in this region. Here is one way to do it, again using different capital letters to represent all the required presents:
+
+    ....AAAFFE.E
+    .BBBAAFFFEEE
+    DDDBAAFFCECE
+    DBBB....CCC.
+    DDD.....C.C.
+
+The third region, `12x5: 1 0 1 0 3 2`, is the same size as the previous region; the only difference is that this region needs to fit one additional present with shape index `4`. Unfortunately, no matter how hard you try, there is _no way to fit all of the presents_ into this region.
+
+So, in this example, `_2_` regions can fit all of their listed presents.
+
+Consider the regions beneath each tree and the presents the Elves would like to fit into each of them. _How many of the regions can fit all of the presents listed?_
+
+Your puzzle answer was `575`.
 
 ## --- Part Two ---
 
-------------------------
+------------------------------------
 
-Thanks in part to your analysis, the Elves have figured out a little bit about the issue. They now know that the problematic data path passes through both `dac` (a [digital-to-analog converter](https://en.wikipedia.org/wiki/Digital-to-analog_converter)) and `fft` (a device which performs a [fast Fourier transform](https://en.wikipedia.org/wiki/Fast_Fourier_transform)).
+The Elves thank you profusely for the help and start rearranging the oddly-shaped presents. As you look up, you notice that a lot more Elves have arrived here at the Christmas tree farm.
 
-They're still not sure which specific path is the problem, and so they now need you to find every path from `svr` (the server rack) to `out`. However, the paths you find must all also visit both `dac` _and_ `fft` (in any order).
+In fact, many of these new arrivals look _familiar_: they're the Elves you helped while decorating the North Pole base. Right on [schedule](https://adventofcode.com/2025/day/1), each group seems to have brought a _star_ to put atop one of the Christmas trees!
 
-For example:
+Before any of them can find a ladder, a particularly large Christmas tree suddenly flashes brightly when a large _star_ magically appears above it! As your eyes readjust, you think you notice a portly man with a white beard disappear into the crowd.
 
-    svr: aaa bbb
-    aaa: fft
-    fft: ccc
-    bbb: tty
-    tty: ccc
-    ccc: ddd eee
-    ddd: hub
-    hub: fff
-    eee: dac
-    dac: fff
-    fff: ggg hhh
-    ggg: out
-    hhh: out
+You go look for a ladder; only _23 stars_ to go.
 
-This new list of devices contains many paths from `svr` to `out`:
-
-    svr,aaa,fft,ccc,ddd,hub,fff,ggg,out
-    svr,aaa,fft,ccc,ddd,hub,fff,hhh,out
-    svr,aaa,fft,ccc,eee,dac,fff,ggg,out
-    svr,aaa,fft,ccc,eee,dac,fff,hhh,out
-    svr,bbb,tty,ccc,ddd,hub,fff,ggg,out
-    svr,bbb,tty,ccc,ddd,hub,fff,hhh,out
-    svr,bbb,tty,ccc,eee,dac,fff,ggg,out
-    svr,bbb,tty,ccc,eee,dac,fff,hhh,out
-
-However, only _`2`_ paths from `svr` to `out` visit both `dac` and `fft`.
-
-Find all of the paths that lead from `svr` to `out`. _How many of those paths visit both `dac` and `fft`?_
-
-Your puzzle answer was `294310962265680`.
+If you like, you can .
 
 Both parts of this puzzle are complete! They provide two gold stars: \*\*
