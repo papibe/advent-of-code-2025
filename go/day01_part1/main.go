@@ -32,8 +32,8 @@ func parse(filename string) []Rotation {
 	return rotations
 }
 
+// equivalent function to % in python
 func mod(a, b int) int {
-	// equivalent function to % in python
 	return (a%b + b) % b
 }
 
