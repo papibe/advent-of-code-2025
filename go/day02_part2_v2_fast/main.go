@@ -57,6 +57,7 @@ func solve(ranges []Range) int {
 
 				if check_symmetry(n, pattern_len, str_id) {
 					sum_of_invalid_ids += product_id
+					break
 				}
 			}
 		}
